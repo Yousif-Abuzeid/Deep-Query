@@ -1,10 +1,10 @@
 from google import genai
-from stores.llm.BaseLLMProvider import BaseLLMProvider
+from stores.llm.LLMInterface import LLMInterface
 from ..LLMEnums import GoogleGenAIEnums
 import logging
 from google.genai import types
 
-class GoogleGenAIProvider(BaseLLMProvider):
+class GoogleGenAIProvider(LLMInterface):
     def __init__(self,api_key: str,
                  default_input_max_characters: int = 1000,
                  default_generation_max_output_tokens: int = 1000,
@@ -77,8 +77,8 @@ class GoogleGenAIProvider(BaseLLMProvider):
             "role": role,
             "parts": [{"text": prompt}]
         }
-    
-    def embed_text(self, text: str):
+
+    def embed_text(self, text: str, document_type: str = None):
         if not self.client:
             self.logger.error("GoogleGenAI client is not initialized.")
             return None
@@ -89,17 +89,18 @@ class GoogleGenAIProvider(BaseLLMProvider):
         
         processed_text = self.process_text(text)
         
-        response = self.client.embed_content(
+        response = self.client.models.embed_content(
             model=self.embedding_model_id,
-            inputs=processed_text
+            contents=processed_text
         )
 
-        if not response or not response.embedding or not response.embedding[0]:
+        if not response or not response.embeddings or not response.embeddings[0]:
             self.logger.error("No embedding returned from GoogleGenAI.")
             return None
 
-        embedding = response.embedding[0]
+        embedding = response.embeddings[0].values
         if len(embedding) != self.embedding_size:
+            
             self.logger.warning(f"Expected embedding size {self.embedding_size}, but got {len(embedding)}")
         
         return embedding

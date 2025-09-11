@@ -11,3 +11,4 @@ motor==3.7.1
 openai==1.107.0
 cohere==5.17.0
 google-genai==1.35.0
+qdrant-client==1.15.1
