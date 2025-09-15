@@ -141,3 +141,5 @@ class QdrantDBProvider(VectorDBInterface):
         return self.client.search(
             collection_name=collection_name, query_vector=query_vector, limit=limit
         )
+
+    
