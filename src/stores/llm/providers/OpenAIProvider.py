@@ -27,6 +27,8 @@ class OpenAIProvider(LLMInterface):
 
         self.logger = logging.getLogger(__name__)
 
+        self.enums = OpenAIEnums
+
 
     def set_generation_model(self, model_id: str):
         self.generation_model_id = model_id
@@ -43,7 +45,7 @@ class OpenAIProvider(LLMInterface):
             text = text[:self.default_input_max_characters]
         return text.strip()
 
-    def generate_text(self, prompt: str,chat_history=[], max_output_tokens: int = None, temperature: float = None):
+    def generate_text(self, prompt: str, chat_history=[], system_prompt: str = None, max_output_tokens: int = None, temperature: float = None):
         
         if not self.client:
             self.logger.error("OpenAI client is not initialized.")

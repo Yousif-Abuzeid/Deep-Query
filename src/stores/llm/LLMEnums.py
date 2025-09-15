@@ -21,7 +21,7 @@ class CohereEnums(Enum):
     QUERY = "search_query"
 
 class GoogleGenAIEnums(Enum):
-    SYSTEM = "system_instruction"
+    SYSTEM = "model"
     USER = "user"
     ASSISTANT = "model"
 

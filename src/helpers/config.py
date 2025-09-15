@@ -32,6 +32,10 @@ class Settings(BaseSettings):
     VECTOR_DB_PATH: str # Path for Qdrant DB
     VECTOR_DB_DISTANCE_METHOD: str  # Options: "COSINE", "DOT"
 
+
+
+    DEFAULT_LANG: str = "en"  # Default language for document processing
+    PRIMARY_LANG: str = "en"  # Primary language for template parsing
     class Config:
         env_file = ".env"
 

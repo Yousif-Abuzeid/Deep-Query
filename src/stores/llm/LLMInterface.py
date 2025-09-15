@@ -15,6 +15,7 @@ class LLMInterface(ABC):
         self,
         prompt: str,
         chat_history: list,
+        system_prompt: str = None,
         max_output_tokens: int = None,
         temperature: float = None,
     ):

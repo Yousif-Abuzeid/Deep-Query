@@ -1,13 +1,15 @@
 from fastapi import FastAPI
-from routes import base_router,data_router,nlp_router
 from motor.motor_asyncio import AsyncIOMotorClient
+
 from helpers.config import get_settings
+from routes import base_router, data_router, nlp_router
 from stores.llm.LLMProviderFactory import LLMProviderFactory
+from stores.llm.templates import TemplateParser
 from stores.vectordb import VectorDBProviderFactory
 
-
-
 app = FastAPI()
+
+
 @app.on_event("startup")
 async def startup_span():
     settings = get_settings()
@@ -23,11 +25,19 @@ async def startup_span():
 
     # Set default models
     app.generation_client.set_generation_model(settings.GENERATION_MODEL_ID)
-    app.embedding_client.set_embedding_model(settings.EMBEDDING_MODEL_ID,settings.EMBEDDING_MODEL_SIZE)
+    app.embedding_client.set_embedding_model(
+        settings.EMBEDDING_MODEL_ID, settings.EMBEDDING_MODEL_SIZE
+    )
 
     # Vector DB Client
     app.vector_db_client = vector_db_provider_factory.create(settings.VECTOR_DB_BACKEND)
     app.vector_db_client.connect()
+
+    # Template Parser
+    app.template_parser = TemplateParser(
+        default_language=settings.DEFAULT_LANG, language=settings.PRIMARY_LANG
+    )
+
 
 @app.on_event("shutdown")
 async def shutdown_span():

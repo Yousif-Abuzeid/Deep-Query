@@ -27,6 +27,8 @@ class CoHereProvider(LLMInterface):
 
         self.logger = logging.getLogger(__name__)
 
+        self.enums = CohereEnums
+
     def set_generation_model(self, model_id: str):
         self.generation_model_id = model_id
         self.logger.info(f"Set CoHere generation model to {model_id}")
@@ -46,13 +48,8 @@ class CoHereProvider(LLMInterface):
             text = text[: self.default_input_max_characters]
         return text.strip()
 
-    def generate_text(
-        self,
-        prompt: str,
-        chat_history=[],
-        max_output_tokens: int = None,
-        temperature: float = None,
-    ):
+    def generate_text(self, prompt: str, chat_history=[], system_prompt: str = None, max_output_tokens: int = None, temperature: float = None):
+
 
         if not self.client:
             self.logger.error("CoHere client is not initialized.")
