@@ -5,7 +5,6 @@ This is a mini version of the RAG (Retrieval-Augmented Generation) architecture.
 
 ## Requirements
 
-- python 3.11 or higher 
 - fastapi==0.116.1
 - uvicorn[standard]==0.35.0
 - python-multipart==0.0.20
@@ -16,6 +15,10 @@ This is a mini version of the RAG (Retrieval-Augmented Generation) architecture.
 - PyMuPDF==1.26.4
 - langchain-community==0.3.29
 - motor==3.7.1
+- openai==1.107.0
+- cohere==5.17.0
+- google-genai==1.35.0
+- qdrant-client==1.15.1
 
 ## Installation
 
