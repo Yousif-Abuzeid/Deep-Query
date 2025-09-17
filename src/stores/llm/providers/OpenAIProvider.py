@@ -1,7 +1,10 @@
-from openai import OpenAI
-from ..LLMInterface import LLMInterface
-from ..LLMEnums import  OpenAIEnums
 import logging
+
+from openai import OpenAI
+
+from ..LLMEnums import OpenAIEnums
+from ..LLMInterface import LLMInterface
+
 
 class OpenAIProvider(LLMInterface):
     def __init__(
@@ -23,41 +26,57 @@ class OpenAIProvider(LLMInterface):
         self.embedding_model_id = None
         self.embedding_size = None
 
-        self.client = OpenAI(api_key=self.api_key, api_base=self.api_url)
+        self.client = OpenAI(api_key=self.api_key, base_url=self.api_url)
 
         self.logger = logging.getLogger(__name__)
 
         self.enums = OpenAIEnums
 
-
     def set_generation_model(self, model_id: str):
         self.generation_model_id = model_id
-        self.logger.info(f"Set OpenAI generation model to {model_id}")        
+        self.logger.info(f"Set OpenAI generation model to {model_id}")
 
-    def set_embedding_model(self, model_id: str,embedding_size: int):
+    def set_embedding_model(self, model_id: str, embedding_size: int):
         self.embedding_model_id = model_id
         self.embedding_size = embedding_size
-        self.logger.info(f"Set OpenAI embedding model to {model_id} with size {embedding_size}")
+        self.logger.info(
+            f"Set OpenAI embedding model to {model_id} with size {embedding_size}"
+        )
 
     def process_text(self, text: str):
         if len(text) > self.default_input_max_characters:
-            self.logger.warning(f"Input text exceeds maximum character limit of {self.default_input_max_characters}. Truncating.")
-            text = text[:self.default_input_max_characters]
+            self.logger.warning(
+                f"Input text exceeds maximum character limit of {self.default_input_max_characters}. Truncating."
+            )
+            text = text[: self.default_input_max_characters]
         return text.strip()
 
-    def generate_text(self, prompt: str, chat_history=[], system_prompt: str = None, max_output_tokens: int = None, temperature: float = None):
-        
+    def generate_text(
+        self,
+        prompt: str,
+        chat_history=[],
+        system_prompt: str = None,
+        max_output_tokens: int = None,
+        temperature: float = None,
+    ):
+
         if not self.client:
             self.logger.error("OpenAI client is not initialized.")
             return None
-        
+
         if not self.generation_model_id:
             self.logger.error("Generation model is not set.")
             return None
-        
-        max_output_tokens = max_output_tokens if max_output_tokens else self.default_generation_max_output_tokens
-        
-        temperature = temperature if temperature else self.default_generation_temperature
+
+        max_output_tokens = (
+            max_output_tokens
+            if max_output_tokens
+            else self.default_generation_max_output_tokens
+        )
+
+        temperature = (
+            temperature if temperature else self.default_generation_temperature
+        )
 
         chat_history.append(self.construct_prompt(prompt, OpenAIEnums.USER.value))
 
@@ -65,42 +84,47 @@ class OpenAIProvider(LLMInterface):
             model=self.generation_model_id,
             messages=chat_history,
             max_tokens=max_output_tokens,
-            temperature=temperature
+            temperature=temperature,
         )
 
-        if not response or not response.choices or len(response.choices) == 0 or not response.choices[0].message:
+        if (
+            not response
+            or not response.choices
+            or len(response.choices) == 0
+            or not response.choices[0].message
+        ):
             self.logger.error("No response received from OpenAI.")
             return None
-        
-        generated_text = response.choices[0].message['content']
+
+        generated_text = response.choices[0].message.content
 
         return generated_text
-    
-    def embed_text(self,text: str,document_type: str=None):
+
+    def embed_text(self, text: str, document_type: str = None):
         if not self.client:
             self.logger.error("OpenAI client is not initialized.")
             return None
-        
+
         if not self.embedding_model_id:
             self.logger.error("Embedding model is not set.")
             return None
-        
+
         response = self.client.embeddings.create(
-            input=text,
-            model=self.embedding_model_id
+            input=text, model=self.embedding_model_id
         )
 
-        if not response or not response.data or len(response.data) == 0 or not response.data[0].embedding:
+        if (
+            not response
+            or not response.data
+            or len(response.data) == 0
+            or not response.data[0].embedding
+        ):
             self.logger.error("No embedding data received from OpenAI.")
             return None
-        
+
         embedding = response.data[0].embedding
 
         return embedding
 
-
     def construct_prompt(self, prompt: str, role: str):
-        return {
-            "role": role,
-            "content": prompt
-        }
+        return {"role": role, "content": prompt}
