@@ -94,7 +94,7 @@ class GoogleGenAIProvider(LLMInterface):
             self.logger.error("No response from GoogleGenAI.")
             return None
 
-        print(response)
+        # print(response)
         generated_text = response.text
         return generated_text
 
