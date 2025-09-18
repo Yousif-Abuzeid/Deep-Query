@@ -8,11 +8,16 @@ class Settings(BaseSettings):
     FILE_MAX_SIZE: int
     FILE_DEFAULT_CHUNK_SIZE: int
 
-    MONGODB_URL: str
-    MONGODB_DATABASE: str
 
-    GENERATION_BACKEND: str  # Options: "OPENAI", "COHERE"
-    EMBEDDING_BACKEND: str  # Options: "OPENAI", "COHERE"
+    POSTGRES_USERNAME: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_HOST: str
+    POSTGRES_PORT: int
+    POSTGRES_MAIN_DATABASE: str
+
+
+    GENERATION_BACKEND: str  # Options: "OPENAI", "COHERE", "GOOGLE_GENAI"
+    EMBEDDING_BACKEND: str  # Options: "OPENAI", "COHERE" , "GOOGLE_GENAI"
     
     OPENAI_API_URL: str = None
     COHERE_API_KEY: str = None
