@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -9,6 +11,15 @@ from stores.llm.templates import TemplateParser
 from stores.vectordb import VectorDBProviderFactory
 
 app = FastAPI()
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+# Main page route
+@app.get("/")
+async def main_page():
+    return FileResponse("static/index.html")
 
 
 @app.on_event("startup")

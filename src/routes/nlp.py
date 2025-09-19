@@ -33,11 +33,12 @@ async def index_project(request: Request, project_id: int, push_request: PushReq
     has_records = True
     page_no = 1
     inserted_items_count = 0
+    page_size = 500
 
     idx = 0
     while has_records:
         chunks = await chunks_model.get_poject_chunks(
-            project_id=project.project_id, page_no=page_no
+            project_id=project.project_id, page_no=page_no, page_size=page_size
         )
         page_no += 1
         if not chunks:
