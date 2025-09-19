@@ -25,7 +25,11 @@ This is a mini version of the RAG (Retrieval-Augmented Generation) architecture.
 ### Install the required dependencies
 
 ```bash
+sudo apt update
+sudo apt install libpq-dev gcc python3-dev
 pip install -r requirements.txt
+
+
 ```
 
 ### Setup environment variables
