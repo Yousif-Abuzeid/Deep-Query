@@ -4,7 +4,7 @@ import cohere
 
 from ..LLMInterface import LLMInterface
 from ..LLMEnums import CohereEnums
-
+from typing import List,Union
 class CoHereProvider(LLMInterface):
     def __init__(
         self,
@@ -84,10 +84,13 @@ class CoHereProvider(LLMInterface):
     def construct_prompt(self, prompt, role):
         return {"role": role, "text": prompt}
     
-    def embed_text(self, document_type, text):
+    def embed_text(self, document_type, text:Union[str,List[str]]):
         if not self.client:
             self.logger.error("CoHere client is not initialized.")
             return None
+
+        if isinstance(text, str):
+            text = [text]
 
         if not self.embedding_model_id:
             self.logger.error("Embedding model is not set.")
@@ -99,11 +102,17 @@ class CoHereProvider(LLMInterface):
             input_type=input_type,
             model=self.embedding_model_id,
             embedding_types=['float'],
-            texts=[self.process_text(text)],
+            texts=[self.process_text(t) for t in text],
         )
 
         if not response or not response.embeddings or not response.embeddings.float:
             self.logger.error("No embedding returned from CoHere API.")
             return None
+        return [f for f in response.embeddings.float]
 
-        return response.embeddings.float[0]
+    
+    ## the following methods are just to comply with langchain expectations of an embedding model wrapper
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        return self.embed_text(texts, document_type=CohereEnums.DOCUMENT.value)
+    def embed_query(self, text: str) -> List[float]:
+        return self.embed_text(text, document_type=CohereEnums.QUERY.value)

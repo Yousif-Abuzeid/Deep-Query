@@ -4,7 +4,7 @@ from openai import OpenAI
 
 from ..LLMEnums import OpenAIEnums
 from ..LLMInterface import LLMInterface
-
+from typing import List,Union
 
 class OpenAIProvider(LLMInterface):
     def __init__(
@@ -100,7 +100,7 @@ class OpenAIProvider(LLMInterface):
 
         return generated_text
 
-    def embed_text(self, text: str, document_type: str = None):
+    def embed_text(self, text: Union[str, List[str]], document_type: str = None):
         if not self.client:
             self.logger.error("OpenAI client is not initialized.")
             return None
@@ -122,9 +122,14 @@ class OpenAIProvider(LLMInterface):
             self.logger.error("No embedding data received from OpenAI.")
             return None
 
-        embedding = response.data[0].embedding
+        return [rec.embedding for rec in response.data]
 
-        return embedding
 
     def construct_prompt(self, prompt: str, role: str):
         return {"role": role, "content": prompt}
+
+    ## the following methods are just to comply with langchain expectations of an embedding model wrapper
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        return self.embed_text(texts, document_type=OpenAIEnums.DOCUMENT.value)
+    def embed_query(self, text: str) -> List[float]:
+        return self.embed_text(text, document_type=OpenAIEnums.QUERY.value)

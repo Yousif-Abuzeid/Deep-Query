@@ -6,7 +6,7 @@ from google.genai import types
 from stores.llm.LLMInterface import LLMInterface
 
 from ..LLMEnums import GoogleGenAIEnums
-
+from typing import List,Union
 
 class GoogleGenAIProvider(LLMInterface):
     def __init__(
@@ -101,7 +101,7 @@ class GoogleGenAIProvider(LLMInterface):
     def construct_prompt(self, prompt: str, role: str):
         return {"role": role, "parts": [{"text": prompt}]}
 
-    def embed_text(self, text: str, document_type: str = None):
+    def embed_text(self, text: Union[str, List[str]], document_type: str = None):
         if not self.client:
             self.logger.error("GoogleGenAI client is not initialized.")
             return None
@@ -110,21 +110,44 @@ class GoogleGenAIProvider(LLMInterface):
             self.logger.error("Embedding model is not set.")
             return None
 
-        processed_text = self.process_text(text)
+        # Handle single string input
+        single_input = isinstance(text, str)
+        if single_input:
+            text = [text]
 
         response = self.client.models.embed_content(
-            model=self.embedding_model_id, contents=processed_text
+            model=self.embedding_model_id, 
+            contents=[self.process_text(t) for t in text]
         )
 
-        if not response or not response.embeddings or not response.embeddings[0]:
+        if not response or not response.embeddings:
             self.logger.error("No embedding returned from GoogleGenAI.")
             return None
 
-        embedding = response.embeddings[0].values
-        if len(embedding) != self.embedding_size:
+        # Extract ALL embeddings, not just the first one
+        embeddings = []
+        for emb in response.embeddings:
+            if not emb or not emb.values:
+                self.logger.error("Invalid embedding in response.")
+                return None
+            embeddings.append(emb.values)
 
-            self.logger.warning(
-                f"Expected embedding size {self.embedding_size}, but got {len(embedding)}"
-            )
+            # Validate embedding size
+            if len(emb.values) != self.embedding_size:
+                self.logger.warning(
+                    f"Expected embedding size {self.embedding_size}, but got {len(emb.values)}"
+                )
 
-        return embedding
+        # Return single embedding for single input, list for multiple inputs
+        
+        return embeddings[0] if single_input else embeddings
+    
+
+    ## the following methods are just to comply with langchain expectations of an embedding model wrapper
+
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        return self.embed_text(texts, document_type=GoogleGenAIEnums.DOCUMENT.value)
+    def embed_query(self, text: str) -> List[float]:
+        return self.embed_text(text, document_type=GoogleGenAIEnums.QUERY.value)
+
+
