@@ -2,7 +2,7 @@ import logging
 
 from openai import OpenAI
 
-from ..LLMEnums import OpenAIEnums
+from ..LLMEnums import OpenAIEnums, DocumentTypeEnum
 from ..LLMInterface import LLMInterface
 from typing import List,Union
 
@@ -130,6 +130,6 @@ class OpenAIProvider(LLMInterface):
 
     ## the following methods are just to comply with langchain expectations of an embedding model wrapper
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        return self.embed_text(texts, document_type=OpenAIEnums.DOCUMENT.value)
+        return self.embed_text(texts, document_type=DocumentTypeEnum.DOCUMENT.value)
     def embed_query(self, text: str) -> List[float]:
-        return self.embed_text(text, document_type=OpenAIEnums.QUERY.value)
+        return self.embed_text(text, document_type=DocumentTypeEnum.QUERY.value)

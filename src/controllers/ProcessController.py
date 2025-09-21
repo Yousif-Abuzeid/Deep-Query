@@ -3,6 +3,7 @@ import os
 
 from langchain_community.document_loaders import PyMuPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_experimental.text_splitter import SemanticChunker
 from models import ProcessingEnum
 
 from .BaseController import BaseController
@@ -12,10 +13,11 @@ logger = logging.getLogger("uvicorn.error")
 
 
 class ProcessController(BaseController):
-    def __init__(self, project_id):
+    def __init__(self, project_id, embedding_client=None):
         super().__init__()
         self.project_id = project_id
         self.project_path = ProjectController().get_project_path(project_id)
+        self.embedding_client = embedding_client
 
     def get_file_extension(self, file_id: str) -> str:
         return os.path.splitext(file_id)[-1]
@@ -48,11 +50,12 @@ class ProcessController(BaseController):
         chunk_size: int = 100,
         overlap_size: int = 20,
     ):
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=chunk_size,
-            chunk_overlap=overlap_size,
-            length_function=len,
-            separators=["\n\n", "\n", " ", ""],
+        text_splitter = SemanticChunker(
+            embeddings=self.embedding_client,
+            min_chunk_size=chunk_size
+            # chunk_overlap=overlap_size,
+            # length_function=len,
+            # separators=["\n\n", "\n", " ", ""],
         )
         file_content_text = [doc.page_content for doc in file_content]
         file_content_metadata = [doc.metadata for doc in file_content]

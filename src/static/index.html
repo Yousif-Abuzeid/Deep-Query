@@ -4,7 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAG Chat</title>
+    <link rel="icon" type="image/png" href="/assets/logos/logo.png">
     <style>
+        :root {
+            --bg-primary: #f7f7f8;
+            --bg-secondary: #fff;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --border-color: #e5e5e5;
+            --border-input: #d1d5db;
+            --shadow: rgba(0,0,0,0.1);
+            --user-bg: #10a37f;
+            --user-hover: #0d8a6b;
+            --assistant-bg: #6366f1;
+            --disabled-bg: #d1d5db;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+            --success-text: #166534;
+            --error-bg: #fef2f2;
+            --error-border: #fecaca;
+            --error-text: #dc2626;
+            --info-bg: #f0f9ff;
+            --info-border: #0ea5e9;
+            --info-text: #0369a1;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #e5e5e5;
+            --text-secondary: #a3a3a3;
+            --border-color: #404040;
+            --border-input: #525252;
+            --shadow: rgba(0,0,0,0.3);
+            --user-bg: #10a37f;
+            --user-hover: #0d8a6b;
+            --assistant-bg: #6366f1;
+            --disabled-bg: #525252;
+            --success-bg: #064e3b;
+            --success-border: #059669;
+            --success-text: #34d399;
+            --error-bg: #7f1d1d;
+            --error-border: #dc2626;
+            --error-text: #fca5a5;
+            --info-bg: #0c4a6e;
+            --info-border: #0284c7;
+            --info-text: #7dd3fc;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,45 +60,77 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f7f7f8;
+            background: var(--bg-primary);
             height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .header {
-            background: #fff;
-            border-bottom: 1px solid #e5e5e5;
-            padding: 12px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px var(--shadow);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            height: 48px;
+            width: 48px;
+            object-fit: contain;
         }
 
         .header h1 {
             font-size: 18px;
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
         }
 
-        .project-selector {
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .session-info {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .project-selector label {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .project-selector input {
-            width: 80px;
-            padding: 6px 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 14px;
+        .session-info span {
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
         }
 
         .chat-container {
@@ -76,16 +155,19 @@
         .message {
             display: flex;
             gap: 12px;
-            max-width: 80%;
+            max-width: 85%;
+            width: 100%;
         }
 
         .message.user {
             align-self: flex-end;
             flex-direction: row-reverse;
+            max-width: 80%;
         }
 
         .message.assistant {
             align-self: flex-start;
+            max-width: 90%;
         }
 
         .message-avatar {
@@ -101,36 +183,132 @@
         }
 
         .message.user .message-avatar {
-            background: #10a37f;
+            background: var(--user-bg);
             color: white;
         }
 
         .message.assistant .message-avatar {
-            background: #6366f1;
+            background: var(--assistant-bg);
             color: white;
         }
 
         .message-content {
-            background: white;
+            background: var(--bg-secondary);
             padding: 12px 16px;
             border-radius: 12px;
-            border: 1px solid #e5e5e5;
+            border: 1px solid var(--border-color);
             font-size: 15px;
             line-height: 1.5;
             white-space: pre-wrap;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            position: relative;
+            flex: 1;
+            min-width: 0;
+            word-wrap: break-word;
         }
 
         .message.user .message-content {
-            background: #10a37f;
+            background: var(--user-bg);
             color: white;
-            border-color: #10a37f;
+            border-color: var(--user-bg);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .message-content:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .message.user .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .message.user .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .code-block {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 8px 0;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .code-header {
+            background: var(--border-color);
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-language {
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .code-copy-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .code-copy-btn:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .code-content {
+            padding: 12px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre;
+            color: var(--text-primary);
+            max-width: 100%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .typing-indicator {
             display: none;
             align-items: center;
             gap: 8px;
-            color: #666;
+            color: var(--text-secondary);
             font-size: 14px;
             padding: 12px 0;
         }
@@ -144,7 +322,7 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #999;
+            background: var(--text-secondary);
             animation: typing 1.4s infinite ease-in-out;
         }
 
@@ -161,18 +339,19 @@
 
         .input-area {
             padding: 20px 0;
-            background: #f7f7f8;
+            background: var(--bg-primary);
         }
 
         .input-container {
-            background: white;
-            border: 1px solid #d1d5db;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-input);
             border-radius: 12px;
             padding: 8px;
             display: flex;
             align-items: flex-end;
             gap: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px var(--shadow);
+            transition: all 0.3s ease;
         }
 
         .file-upload-btn {
@@ -185,11 +364,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #666;
+            color: var(--text-secondary);
         }
 
         .file-upload-btn:hover {
-            background: #f3f4f6;
+            background: var(--bg-primary);
         }
 
         .file-upload-btn svg {
@@ -207,10 +386,16 @@
             max-height: 120px;
             resize: none;
             font-family: inherit;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        #messageInput::placeholder {
+            color: var(--text-secondary);
         }
 
         .send-btn {
-            background: #10a37f;
+            background: var(--user-bg);
             border: none;
             border-radius: 6px;
             padding: 8px;
@@ -223,11 +408,11 @@
         }
 
         .send-btn:hover:not(:disabled) {
-            background: #0d8a6b;
+            background: var(--user-hover);
         }
 
         .send-btn:disabled {
-            background: #d1d5db;
+            background: var(--disabled-bg);
             cursor: not-allowed;
         }
 
@@ -238,19 +423,20 @@
 
         .file-info {
             display: none;
-            background: #f0f9ff;
-            border: 1px solid #0ea5e9;
+            background: var(--info-bg);
+            border: 1px solid var(--info-border);
             border-radius: 8px;
             padding: 8px 12px;
             margin-bottom: 8px;
             font-size: 14px;
-            color: #0369a1;
+            color: var(--info-text);
+            transition: all 0.3s ease;
         }
 
         .file-info .close-btn {
             background: none;
             border: none;
-            color: #0369a1;
+            color: var(--info-text);
             cursor: pointer;
             float: right;
             font-size: 16px;
@@ -259,13 +445,13 @@
 
         .welcome-message {
             text-align: center;
-            color: #666;
+            color: var(--text-secondary);
             padding: 40px 20px;
             font-size: 16px;
         }
 
         .welcome-message h2 {
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 8px;
             font-size: 24px;
             font-weight: 600;
@@ -276,9 +462,9 @@
         }
 
         .error-message {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error-text);
             padding: 12px;
             border-radius: 8px;
             margin: 8px 0;
@@ -286,9 +472,9 @@
         }
 
         .success-message {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-text);
             padding: 12px;
             border-radius: 8px;
             margin: 8px 0;
@@ -301,21 +487,54 @@
             }
             
             .message {
+                max-width: 95%;
+            }
+            
+            .message.user {
                 max-width: 90%;
+            }
+            
+            .message.assistant {
+                max-width: 95%;
             }
             
             .header {
                 padding: 12px;
+            }
+            
+            .code-content {
+                font-size: 12px;
+                padding: 8px;
+            }
+            
+            .logo {
+                height: 40px;
+                width: 40px;
+            }
+            
+            .header-left {
+                gap: 12px;
+            }
+            
+            .header {
+                padding: 14px 12px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>RAG Chat</h1>
-        <div class="project-selector">
-            <label for="projectId">Project:</label>
-            <input type="number" id="projectId" value="1" min="1">
+        <div class="header-left">
+            <img src="/assets/logos/logo.png" alt="RAG Chat Logo" class="logo">
+            <h1>RAG Chat</h1>
+        </div>
+        <div class="header-controls">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode">
+                🌙
+            </button>
+            <div class="session-info">
+                <span id="sessionDisplay">Session: Loading...</span>
+            </div>
         </div>
     </div>
 
@@ -373,6 +592,162 @@
         const API_BASE = '/api/v1';
         let uploadedFileId = null;
         let isProcessing = false;
+        let sessionId = null;
+        let projectId = null;
+
+        // Generate or retrieve session ID and project ID
+        function initSession() {
+            // Check if we have a stored session
+            sessionId = localStorage.getItem('rag_session_id');
+            
+            if (!sessionId) {
+                // Generate new unique session ID
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('rag_session_id', sessionId);
+            }
+
+            // Convert session ID to a consistent integer project ID
+            projectId = Math.abs(hashCode(sessionId)) % 100000; // Range: 0-99,999
+            
+            // Update display
+            document.getElementById('sessionDisplay').textContent = `Project: ${projectId}`;
+        }
+
+        // Simple hash function to convert string to consistent integer
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return hash;
+        }
+
+        // Get current project ID
+        function getProjectId() {
+            return projectId;
+        }
+
+        // Copy text to clipboard
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                return true;
+            }
+        }
+
+        // Show copy feedback
+        function showCopyFeedback(button) {
+            const originalText = button.textContent;
+            button.textContent = '✓ Copied';
+            button.style.color = 'var(--success-text)';
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.color = '';
+            }, 2000);
+        }
+
+        // Parse and render message content with code blocks
+        function parseMessageContent(content) {
+            const codeBlockRegex = /```(\w+)?\n?([\s\S]*?)```/g;
+            const parts = [];
+            let lastIndex = 0;
+            let match;
+
+            while ((match = codeBlockRegex.exec(content)) !== null) {
+                // Add text before code block
+                if (match.index > lastIndex) {
+                    parts.push({
+                        type: 'text',
+                        content: content.slice(lastIndex, match.index)
+                    });
+                }
+
+                // Add code block
+                parts.push({
+                    type: 'code',
+                    language: match[1] || 'text',
+                    content: match[2].trim()
+                });
+
+                lastIndex = match.index + match[0].length;
+            }
+
+            // Add remaining text
+            if (lastIndex < content.length) {
+                parts.push({
+                    type: 'text',
+                    content: content.slice(lastIndex)
+                });
+            }
+
+            return parts.length > 0 ? parts : [{ type: 'text', content }];
+        }
+
+        // Create code block element
+        function createCodeBlock(language, code) {
+            const codeBlock = document.createElement('div');
+            codeBlock.className = 'code-block';
+
+            const header = document.createElement('div');
+            header.className = 'code-header';
+
+            const languageSpan = document.createElement('span');
+            languageSpan.className = 'code-language';
+            languageSpan.textContent = language;
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'code-copy-btn';
+            copyBtn.textContent = '📋 Copy';
+            copyBtn.onclick = async () => {
+                await copyToClipboard(code);
+                showCopyFeedback(copyBtn);
+            };
+
+            header.appendChild(languageSpan);
+            header.appendChild(copyBtn);
+
+            const content = document.createElement('div');
+            content.className = 'code-content';
+            content.textContent = code;
+
+            codeBlock.appendChild(header);
+            codeBlock.appendChild(content);
+
+            return codeBlock;
+        }
+
+        // Theme management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const themeButton = document.getElementById('themeToggle');
+            themeButton.textContent = theme === 'dark' ? '☀️' : '🌙';
+            themeButton.title = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+        }
 
         // Auto-resize textarea
         function autoResize(textarea) {
@@ -416,7 +791,7 @@
 
         // Upload file
         async function uploadFile(file) {
-            const projectId = document.getElementById('projectId').value;
+            const projectId = getProjectId();
             const formData = new FormData();
             formData.append('file', file);
 
@@ -446,7 +821,7 @@
 
         // Process uploaded file
         async function processFile() {
-            const projectId = document.getElementById('projectId').value;
+            const projectId = getProjectId();
             
             try {
                 const response = await fetch(`${API_BASE}/data/process/${projectId}`, {
@@ -456,7 +831,7 @@
                     },
                     body: JSON.stringify({
                         chunk_size: 200,
-                        overlap_size: 20,
+                        overlap_size: 40,
                         do_reset: 0
                     })
                 });
@@ -478,7 +853,7 @@
 
         // Index to vector database
         async function indexToVectorDB() {
-            const projectId = document.getElementById('projectId').value;
+            const projectId = getProjectId();
             
             try {
                 const response = await fetch(`${API_BASE}/nlp/index/push/${projectId}`, {
@@ -534,7 +909,7 @@
 
         // Ask RAG
         async function askRAG(question) {
-            const projectId = document.getElementById('projectId').value;
+            const projectId = getProjectId();
             
             const response = await fetch(`${API_BASE}/nlp/index/answer/${projectId}`, {
                 method: 'POST',
@@ -574,22 +949,52 @@
             
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
-            messageContent.textContent = content;
+            
+            // Add copy button for all messages
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.textContent = '📋';
+            copyBtn.title = 'Copy message';
+            copyBtn.onclick = async () => {
+                await copyToClipboard(content);
+                showCopyFeedback(copyBtn);
+            };
+            messageContent.appendChild(copyBtn);
             
             if (sender === 'user') {
                 avatar.textContent = 'U';
+                messageContent.appendChild(document.createTextNode(content));
             } else if (sender === 'assistant') {
                 avatar.textContent = '🤖';
+                
+                // Parse content for code blocks
+                const parts = parseMessageContent(content);
+                
+                parts.forEach(part => {
+                    if (part.type === 'text') {
+                        if (part.content.trim()) {
+                            const textNode = document.createElement('span');
+                            textNode.style.whiteSpace = 'pre-wrap';
+                            textNode.textContent = part.content;
+                            messageContent.appendChild(textNode);
+                        }
+                    } else if (part.type === 'code') {
+                        const codeBlock = createCodeBlock(part.language, part.content);
+                        messageContent.appendChild(codeBlock);
+                    }
+                });
+                
                 if (isError) {
-                    messageContent.style.background = '#fef2f2';
-                    messageContent.style.color = '#dc2626';
-                    messageContent.style.borderColor = '#fecaca';
+                    messageContent.style.background = 'var(--error-bg)';
+                    messageContent.style.color = 'var(--error-text)';
+                    messageContent.style.borderColor = 'var(--error-border)';
                 }
             } else if (sender === 'system') {
                 avatar.textContent = '💡';
-                messageContent.style.background = isError ? '#fef2f2' : '#f0fdf4';
-                messageContent.style.color = isError ? '#dc2626' : '#166534';
-                messageContent.style.borderColor = isError ? '#fecaca' : '#bbf7d0';
+                messageContent.appendChild(document.createTextNode(content));
+                messageContent.style.background = isError ? 'var(--error-bg)' : 'var(--success-bg)';
+                messageContent.style.color = isError ? 'var(--error-text)' : 'var(--success-text)';
+                messageContent.style.borderColor = isError ? 'var(--error-border)' : 'var(--success-border)';
                 messageDiv.style.alignSelf = 'center';
                 messageDiv.style.maxWidth = '100%';
             }
@@ -612,6 +1017,8 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            initSession();
             document.getElementById('messageInput').focus();
         });
     </script>

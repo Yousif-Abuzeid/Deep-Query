@@ -3,7 +3,7 @@ import logging
 import cohere
 
 from ..LLMInterface import LLMInterface
-from ..LLMEnums import CohereEnums
+from ..LLMEnums import CohereEnums, DocumentTypeEnum
 from typing import List,Union
 class CoHereProvider(LLMInterface):
     def __init__(
@@ -113,6 +113,6 @@ class CoHereProvider(LLMInterface):
     
     ## the following methods are just to comply with langchain expectations of an embedding model wrapper
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        return self.embed_text(texts, document_type=CohereEnums.DOCUMENT.value)
+        return self.embed_text(texts, document_type=DocumentTypeEnum.DOCUMENT.value)
     def embed_query(self, text: str) -> List[float]:
-        return self.embed_text(text, document_type=CohereEnums.QUERY.value)
+        return self.embed_text(text, document_type=DocumentTypeEnum.QUERY.value)

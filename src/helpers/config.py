@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings,SettingsConfigDict
-
+from typing import List
 class Settings(BaseSettings):
     APP_NAME: str
     APP_VERSION: str
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = None
     GOOGLE_GENAI_API_KEY: str = None
 
-
+    GENERATION_MODEL_ID_LITERAL: List[str] = None
     GENERATION_MODEL_ID: str = None
     EMBEDDING_MODEL_ID: str = None
     EMBEDDING_MODEL_SIZE: int = None
@@ -32,11 +32,12 @@ class Settings(BaseSettings):
     GENERATION_DEFAULT_MAX_TOKENS: int = None
     GENERATION_DEFAULT_TEMPERATURE: float = None
 
-
+    VECTOR_DB_BACKEND_LITERAL: List[str] = None
     VECTOR_DB_BACKEND: str  # Options: "QDRANT"
     VECTOR_DB_PATH: str # Path for Qdrant DB
     VECTOR_DB_DISTANCE_METHOD: str  # Options: "COSINE", "DOT"
-
+    VECTOR_DB_DISTANCE_METHOD_LITERAL: List[str] = None
+    VECTOR_DB_PGVEC_INDEX_THRESHOLD: int = 100  # Threshold to create index on pgvector vector column
 
 
     DEFAULT_LANG: str = "en"  # Default language for document processing

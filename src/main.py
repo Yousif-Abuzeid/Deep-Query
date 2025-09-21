@@ -14,6 +14,7 @@ app = FastAPI()
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 
 # Main page route
@@ -32,7 +33,7 @@ async def startup_span():
     )
     print("Connected to the PostgreSQL database!")
     llm_provider_factory = LLMProviderFactory(config=settings)
-    vector_db_provider_factory = VectorDBProviderFactory(config=settings)
+    vector_db_provider_factory = VectorDBProviderFactory(config=settings, db_client=app.db_client)
 
     # Clients
     app.generation_client = llm_provider_factory.create(settings.GENERATION_BACKEND)
@@ -46,7 +47,7 @@ async def startup_span():
 
     # Vector DB Client
     app.vector_db_client = vector_db_provider_factory.create(settings.VECTOR_DB_BACKEND)
-    app.vector_db_client.connect()
+    await app.vector_db_client.connect()
 
     # Template Parser
     app.template_parser = TemplateParser(
@@ -58,7 +59,7 @@ async def startup_span():
 async def shutdown_span():
     app.db_engine.dispose()
     print("Disconnected from the PostgreSQL database!")
-    app.vector_db_client.disconnect()
+    await app.vector_db_client.disconnect()
 
 
 # app.router.lifespan.on_startup.append(startup_span)
