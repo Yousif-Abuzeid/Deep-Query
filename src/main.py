@@ -9,12 +9,15 @@ from routes import base_router, data_router, nlp_router
 from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.llm.templates import TemplateParser
 from stores.vectordb import VectorDBProviderFactory
-
+from utils.metrics import setup_metrics
 app = FastAPI()
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+
+setup_metrics(app)
+
 
 
 # Main page route
