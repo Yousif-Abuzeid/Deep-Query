@@ -3,7 +3,7 @@ import logging
 from typing import List
 
 from sqlalchemy.sql import text as sql_text
-
+import sqlalchemy
 from models.db_schemas import RetrievedDocument
 
 from ..VectorDBEnums import (
@@ -43,8 +43,14 @@ class PGVectorProvider(VectorDBInterface):
 
     async def connect(self):
         async with self.db_client() as session:
-            async with session.begin():
-                await session.execute(sql_text("CREATE EXTENSION IF NOT EXISTS vector"))
+            try:
+                async with session.begin():
+                    await session.execute(sql_text("CREATE EXTENSION IF NOT EXISTS vector"))
+            except sqlalchemy.exc.IntegrityError as e:
+                if "vector" in str(e) and "already exists" in str(e):
+                    print("Vector extension already exists, continuing...")
+                else:
+                    raise e
 
     async def disconnect(self):
         pass

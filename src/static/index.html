@@ -803,7 +803,18 @@
                     body: formData
                 });
                 
-                const result = await response.json();
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                let result;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    // If not JSON, get text response for debugging
+                    const textResponse = await response.text();
+                    console.error('Non-JSON response:', textResponse);
+                    throw new Error(`Server returned non-JSON response: ${response.status} ${response.statusText}`);
+                }
                 
                 if (response.ok) {
                     uploadedFileId = result.file_id;
@@ -812,9 +823,10 @@
                     // Auto-process the file
                     await processFile();
                 } else {
-                    showMessage('system', `❌ Upload failed: ${result.signal || 'Unknown error'}`, true);
+                    showMessage('system', `❌ Upload failed: ${result.detail || result.signal || 'Unknown error'}`, true);
                 }
             } catch (error) {
+                console.error('Upload error:', error);
                 showMessage('system', `❌ Upload error: ${error.message}`, true);
             }
         }
@@ -836,7 +848,18 @@
                     })
                 });
 
-                const result = await response.json();
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                let result;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    // If not JSON, get text response for debugging
+                    const textResponse = await response.text();
+                    console.error('Non-JSON response:', textResponse);
+                    throw new Error(`Server returned non-JSON response: ${response.status} ${response.statusText}`);
+                }
                 
                 if (response.ok) {
                     showMessage('system', `✅ File processed! Indexing to vector database...`);
@@ -844,9 +867,10 @@
                     // Auto-index to vector DB
                     await indexToVectorDB();
                 } else {
-                    showMessage('system', `❌ Processing failed: ${result.signal || 'Unknown error'}`, true);
+                    showMessage('system', `❌ Processing failed: ${result.detail || result.signal || 'Unknown error'}`, true);
                 }
             } catch (error) {
+                console.error('Processing error:', error);
                 showMessage('system', `❌ Processing error: ${error.message}`, true);
             }
         }
@@ -866,14 +890,26 @@
                     })
                 });
 
-                const result = await response.json();
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                let result;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    // If not JSON, get text response for debugging
+                    const textResponse = await response.text();
+                    console.error('Non-JSON response:', textResponse);
+                    throw new Error(`Server returned non-JSON response: ${response.status} ${response.statusText}`);
+                }
                 
                 if (response.ok) {
                     showMessage('system', `🎉 Ready! You can now ask questions about your document.`);
                 } else {
-                    showMessage('system', `❌ Indexing failed: ${result.message || 'Unknown error'}`, true);
+                    showMessage('system', `❌ Indexing failed: ${result.detail || result.message || 'Unknown error'}`, true);
                 }
             } catch (error) {
+                console.error('Indexing error:', error);
                 showMessage('system', `❌ Indexing error: ${error.message}`, true);
             }
         }
@@ -922,12 +958,23 @@
                 })
             });
 
-            const result = await response.json();
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            let result;
+            
+            if (contentType && contentType.includes('application/json')) {
+                result = await response.json();
+            } else {
+                // If not JSON, get text response for debugging
+                const textResponse = await response.text();
+                console.error('Non-JSON response:', textResponse);
+                throw new Error(`Server returned non-JSON response: ${response.status} ${response.statusText}`);
+            }
             
             if (response.ok && result.answer) {
                 showMessage('assistant', result.answer);
             } else {
-                throw new Error(result.message || 'Failed to get answer');
+                throw new Error(result.detail || result.message || 'Failed to get answer');
             }
         }
 

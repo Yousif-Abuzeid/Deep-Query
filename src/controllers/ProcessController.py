@@ -11,7 +11,7 @@ from .ProjectController import ProjectController
 from typing import List
 
 from dataclasses import dataclass
-
+import re
 @dataclass
 class Document:
     page_content: str
@@ -77,7 +77,19 @@ class ProcessController(BaseController):
         )   
         return chunks
 
-
+    def clean_extracted_text(self,text: str) -> str:
+        """Clean text extracted from PDFs"""
+        if not text:
+            return text
+        
+        # Remove null bytes and control characters
+        text = text.replace('\x00', '')
+        text = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', '', text)
+        
+        # Clean up extra whitespace
+        text = re.sub(r'\s+', ' ', text).strip()
+        
+        return text
     def process_simpler_splitter(self, texts: List[str], metadatas: List[dict], chunk_size: int, splitter_tag: str="\n"):
         
         full_text = " ".join(texts)
@@ -92,7 +104,7 @@ class ProcessController(BaseController):
             current_chunk += line + splitter_tag
             if len(current_chunk) >= chunk_size:
                 chunks.append(Document(
-                    page_content=current_chunk.strip(),
+                    page_content=self.clean_extracted_text(current_chunk.strip()),
                     metadata={}
                 ))
 
@@ -100,7 +112,7 @@ class ProcessController(BaseController):
 
         if len(current_chunk) >= 0:
             chunks.append(Document(
-                page_content=current_chunk.strip(),
+                page_content=self.clean_extracted_text(current_chunk),
                 metadata={}
             ))
 
