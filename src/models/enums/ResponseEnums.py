@@ -20,3 +20,5 @@ class ResponseSignal(Enum):
     VECTOR_DB_SEARCH_SUCCESS = "vector_db_search_success"
     RAG_ANSWER_ERROR = "rag_answer_error"
     RAG_ANSWER_SUCCESS = "rag_answer_success"
+    CHAT_ANSWER_ERROR = "chat_answer_error"
+    CHAT_ANSWER_SUCCESS = "chat_answer_success"
