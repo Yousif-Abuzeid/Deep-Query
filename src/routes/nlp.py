@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from models import ResponseSignal
 from models.ChunkModel import ChunkModel
 from models.ProjectModel import ProjectModel
-from routes.schemas.nlp import PushRequest, SearchRequest
+from routes.schemas.nlp import PushRequest, SearchRequest, ChatRequest
 from tqdm.auto import tqdm
 logger = logging.getLogger("uvicorn.error")
 
@@ -181,6 +181,42 @@ async def answer_rag(request: Request, project_id: int, search_request: SearchRe
             "message": ResponseSignal.RAG_ANSWER_SUCCESS.value,
             "answer": answer,
             "full_prompt": full_prompt,
+            "chat_history": chat_history,
+        }
+    )
+
+@nlp_router.post("/index/chat/{project_id}")
+async def chat(request: Request, project_id: int, chat_request: ChatRequest):
+    project_model = await ProjectModel.create_instance(db_client=request.app.db_client)
+    project = await project_model.get_project_or_create_one(project_id=project_id)
+
+    if not project:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": ResponseSignal.PROJECT_NOT_FOUND.value},
+        )
+
+    nlp_controller = NLPController(
+        vectordb_client=request.app.vector_db_client,
+        generation_client=request.app.generation_client,
+        embedding_client=request.app.embedding_client,
+        template_parser=request.app.template_parser,
+    )
+
+    answer, chat_history = await nlp_controller.chat(
+        project=project,
+        query=chat_request.query,
+    )
+    if answer is None:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": ResponseSignal.CHAT_ANSWER_ERROR.value},
+        )
+
+    return JSONResponse(
+        content={
+            "message": ResponseSignal.CHAT_ANSWER_SUCCESS.value,
+            "answer": answer,  
             "chat_history": chat_history,
         }
     )

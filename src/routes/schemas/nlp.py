@@ -8,3 +8,7 @@ class PushRequest(BaseModel):
 class SearchRequest(BaseModel):
     text: str
     limit: Optional[int] = 5
+
+
+class ChatRequest(BaseModel):
+    query: str
