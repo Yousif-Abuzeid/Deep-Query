@@ -3,7 +3,6 @@ from typing import List
 
 from models.db_schemas import DataChunk, Project
 from stores.llm.LLMEnums import DocumentTypeEnum
-
 from .BaseController import BaseController
 import logging
 
@@ -78,7 +77,7 @@ class NLPController(BaseController):
     ):
         # step 1: get collection name
         collection_name = self.create_collection_name(project_id=project.project_id)
-        query_vector = None
+        vector = None
         # step 2: embed the text
         vector = self.embedding_client.embed_text(
             text=text, document_type=DocumentTypeEnum.QUERY.value
@@ -123,6 +122,23 @@ class NLPController(BaseController):
         # step 2: construct LLM prompt
         system_prompt = self.template_parser.get("rag", "system_prompt")
 
+        # Get chat history
+        chat_history = [
+            self.generation_client.construct_prompt(
+                prompt=system_prompt, role=self.generation_client.enums.SYSTEM.value
+            )
+            
+
+        ]
+        history = await self.vectordb_client.get_chat_history(project_id=project.project_id)
+        
+        if history and len(history) > 0:
+            for chat in history:
+                chat_history.append(
+                    self.generation_client.construct_prompt(
+                        prompt=chat['message'], role=chat['role']
+                    )
+                )
         # documents_prompts = []
 
         # for idx, doc in retrieved_docs:
@@ -148,11 +164,17 @@ class NLPController(BaseController):
             "query": query
         })
 
-        chat_history = [
-            self.generation_client.construct_prompt(
-                prompt=system_prompt, role=self.generation_client.enums.SYSTEM.value
-            )
-        ]
+        
+
+        
+        # Add user query to chat history
+        _= await self.vectordb_client.update_chat_history(
+            project_id=project.project_id,
+            new_message={
+                "role": self.generation_client.enums.USER.value,
+                "message": query
+            }
+        )
 
         full_prompt = "\n\n".join(
             [
@@ -164,4 +186,13 @@ class NLPController(BaseController):
         answer = self.generation_client.generate_text(
             prompt=full_prompt, chat_history=chat_history, system_prompt=system_prompt
         )
-        return answer, full_prompt, chat_history
+
+        # Update chat history in DB
+        _= await self.vectordb_client.update_chat_history(
+            project_id=project.project_id,
+            new_message={
+                "role": self.generation_client.enums.ASSISTANT.value,
+                "message": answer
+            }
+        ) 
+        return answer, full_prompt, history

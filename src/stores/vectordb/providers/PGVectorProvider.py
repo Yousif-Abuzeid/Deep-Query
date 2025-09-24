@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import List
+from typing import List,Dict,Any
 
 from sqlalchemy.sql import text as sql_text
 import sqlalchemy
@@ -20,11 +20,13 @@ class PGVectorProvider(VectorDBInterface):
     def __init__(
         self,
         db_client,
+        generation_client=None,
         default_vector_size: int = 786,
         distance_method: str = PgVectorDistanceMethodEnums.COSINE.value,
         index_threshold: int = 100,
     ):
         self.db_client = db_client
+        self.generation_client = generation_client
         self.default_vector_size = default_vector_size
         self.logger = logging.getLogger("uvicorn")
         self.index_threshold = index_threshold
@@ -372,3 +374,37 @@ class PGVectorProvider(VectorDBInterface):
                     await session.execute(drop_sql)
                     await session.commit()
         return await self.create_vector_index(collection_name, index_type)
+
+    async def get_chat_history(self, project_id: int) -> List[Dict[str,Any]]:
+        chat_history = []
+        async with self.db_client() as session:
+            async with session.begin():
+                get_sql = sql_text(
+                    "SELECT chat_history FROM projects WHERE project_id = :project_id"
+                )
+                results = await session.execute(
+                    get_sql, {"project_id": project_id}
+                )
+                record = results.scalar_one_or_none()
+                if record:
+                    chat_history = record
+        return chat_history
+
+    async def update_chat_history(self, project_id: int, new_message: Dict[str, str]) -> bool:
+        
+        async with self.db_client() as session:
+            async with session.begin():
+                
+                update_sql = sql_text("""
+                UPDATE projects 
+                SET chat_history = COALESCE(chat_history, '[]'::jsonb) || :new_message,
+                    updated_at = NOW()
+                WHERE project_id = :project_id
+            """)
+
+                await session.execute(
+                    update_sql, {"new_message": json.dumps(new_message), "project_id": project_id}
+                )
+                await session.commit()
+                return True
+        return False
