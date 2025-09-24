@@ -196,3 +196,45 @@ class NLPController(BaseController):
             }
         ) 
         return answer, full_prompt, history
+
+    
+    async def chat(self, project: Project, query: str):
+        system_prompt = self.template_parser.get("rag", "system_prompt")
+
+        # Get chat history
+        chat_history = [
+            self.generation_client.construct_prompt(
+                prompt=system_prompt, role=self.generation_client.enums.SYSTEM.value
+            )
+        ]
+        history = await self.vectordb_client.get_chat_history(project_id=project.project_id)
+        
+        if history and len(history) > 0:
+            for chat in history:
+                chat_history.append(
+                    self.generation_client.construct_prompt(
+                        prompt=chat['message'], role=chat['role']
+                    )
+                )
+        
+        answer = self.generation_client.generate_text(
+            prompt=query, chat_history=chat_history, system_prompt=system_prompt
+        )
+
+        # Update chat history in DB
+        _= await self.vectordb_client.update_chat_history(
+            project_id=project.project_id,
+            new_message={
+                "role": self.generation_client.enums.USER.value,
+                "message": query
+            }
+        )
+
+        _= await self.vectordb_client.update_chat_history(
+            project_id=project.project_id,
+            new_message={
+                "role": self.generation_client.enums.ASSISTANT.value,
+                "message": answer
+            }
+        ) 
+        return answer, history
