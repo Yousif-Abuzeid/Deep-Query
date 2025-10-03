@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     VECTOR_DB_PGVEC_INDEX_THRESHOLD: int = 100  # Threshold to create index on pgvector vector column
 
     TAVILY_API_KEY: str = None
+    
+    # Deep Research Configuration
+    MAX_CONCURRENT_RESEARCH_UNITS: int = 3  # Parallel research tasks
+    MAX_RESEARCHER_ITERATIONS: int = 3      # Maximum research cycles
+    
     DEFAULT_LANG: str = "en"  # Default language for document processing
     PRIMARY_LANG: str = "en"  # Primary language for template parsing
     class Config:
