@@ -1,10 +1,12 @@
 import logging
+from typing import List, Union
 
+from langchain_openai import ChatOpenAI
 from openai import OpenAI
 
-from ..LLMEnums import OpenAIEnums, DocumentTypeEnum
+from ..LLMEnums import DocumentTypeEnum, OpenAIEnums
 from ..LLMInterface import LLMInterface
-from typing import List,Union
+
 
 class OpenAIProvider(LLMInterface):
     def __init__(
@@ -124,12 +126,23 @@ class OpenAIProvider(LLMInterface):
 
         return [rec.embedding for rec in response.data]
 
-
     def construct_prompt(self, prompt: str, role: str):
         return {"role": role, "content": prompt}
 
     ## the following methods are just to comply with langchain expectations of an embedding model wrapper
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         return self.embed_text(texts, document_type=DocumentTypeEnum.DOCUMENT.value)
+
     def embed_query(self, text: str) -> List[float]:
         return self.embed_text(text, document_type=DocumentTypeEnum.QUERY.value)
+
+    def get_langchain_chat_model(self):
+        if not self.generation_model_id:
+            self.logger.error("Generation model is not set.")
+            return None
+        return ChatOpenAI(
+            model_name=self.generation_model_id,
+            openai_api_key=self.api_key,
+            openai_api_base=self.api_url,
+            temperature=self.default_generation_temperature,
+        )

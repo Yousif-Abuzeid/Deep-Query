@@ -7,7 +7,7 @@ from stores.llm.LLMInterface import LLMInterface
 
 from ..LLMEnums import GoogleGenAIEnums, DocumentTypeEnum
 from typing import List,Union
-
+from langchain_google_genai import ChatGoogleGenerativeAI
 class GoogleGenAIProvider(LLMInterface):
     def __init__(
         self,
@@ -28,7 +28,7 @@ class GoogleGenAIProvider(LLMInterface):
 
         self.client = genai.Client(api_key=self.api_key)
 
-        self.logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger('uvicorn')
 
         self.enums = GoogleGenAIEnums
 
@@ -155,4 +155,9 @@ class GoogleGenAIProvider(LLMInterface):
     def embed_query(self, text: str) -> List[float]:
         return self.embed_text(text, document_type=DocumentTypeEnum.QUERY.value)
 
+    def get_langchain_chat_model(self):
+        if not self.generation_model_id:
+            self.logger.error("Generation model is not set.")
+            return None
+        return ChatGoogleGenerativeAI(model=self.generation_model_id, api_key=self.api_key)
 

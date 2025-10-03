@@ -304,6 +304,117 @@
             overflow-wrap: break-word;
         }
 
+        /* Markdown styling */
+        .markdown-content {
+            line-height: 1.6;
+        }
+
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3,
+        .markdown-content h4,
+        .markdown-content h5,
+        .markdown-content h6 {
+            margin: 16px 0 8px 0;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .markdown-content h1 { font-size: 2em; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; }
+        .markdown-content h2 { font-size: 1.5em; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
+        .markdown-content h3 { font-size: 1.25em; }
+        .markdown-content h4 { font-size: 1.1em; }
+        .markdown-content h5 { font-size: 1em; }
+        .markdown-content h6 { font-size: 0.9em; color: var(--text-secondary); }
+
+        .markdown-content p {
+            margin: 8px 0;
+        }
+
+        .markdown-content ul,
+        .markdown-content ol {
+            margin: 8px 0;
+            padding-left: 24px;
+        }
+
+        .markdown-content li {
+            margin: 4px 0;
+        }
+
+        .markdown-content strong {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .markdown-content em {
+            font-style: italic;
+        }
+
+        .markdown-content a {
+            color: var(--user-bg);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .markdown-content a:hover {
+            border-bottom-color: var(--user-bg);
+        }
+
+        .markdown-content blockquote {
+            border-left: 4px solid var(--border-color);
+            padding-left: 16px;
+            margin: 8px 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .markdown-content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 16px 0;
+        }
+
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .markdown-content table th,
+        .markdown-content table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .markdown-content table th {
+            background: var(--bg-primary);
+            font-weight: 600;
+        }
+
+        .markdown-content code {
+            background: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 0.9em;
+            color: var(--text-primary);
+        }
+
+        .markdown-content pre {
+            background: var(--bg-primary);
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+
         .typing-indicator {
             display: none;
             align-items: center;
@@ -481,6 +592,107 @@
             font-size: 14px;
         }
 
+        .deep-research-loading {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 2px solid var(--assistant-bg);
+            margin: 10px 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .research-status {
+            flex: 1;
+        }
+
+        .research-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .research-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .research-step {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--bg-primary);
+            transition: all 0.3s ease;
+            opacity: 0.5;
+        }
+
+        .research-step.active {
+            opacity: 1;
+            background: var(--info-bg);
+            color: var(--info-text);
+            border-left: 3px solid var(--info-border);
+        }
+
+        .research-progress {
+            height: 4px;
+            background: var(--bg-primary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--user-bg), var(--assistant-bg));
+            animation: progressAnimation 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; }
+        }
+
+        @keyframes progressAnimation {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .deep-research-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 6px;
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: white;
+            font-weight: 600;
+            gap: 6px;
+        }
+
+        .deep-research-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .deep-research-btn:disabled {
+            background: var(--disabled-bg);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .deep-research-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
         @media (max-width: 768px) {
             .chat-container {
                 padding: 0 12px;
@@ -542,7 +754,8 @@
         <div class="chat-messages" id="chatMessages">
             <div class="welcome-message">
                 <h2>👋 Welcome to RAG Chat</h2>
-                <p>Upload your documents and start asking questions!</p>
+                <p>Upload documents for RAG-powered Q&A, or just chat directly!</p>
+                <p style="margin-top: 8px; font-size: 14px;">💡 Use the <strong>🔬 Deep Research</strong> button for comprehensive web-based research on any topic.</p>
             </div>
         </div>
 
@@ -562,24 +775,33 @@
                 <button class="close-btn" onclick="clearFile()">×</button>
             </div>
             
-            <div class="input-container">
+                        <div class="input-container">
                 <button class="file-upload-btn" onclick="document.getElementById('fileInput').click()" title="Upload file">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 4V2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V9h2v4h4v2z"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
                 </button>
                 
                 <textarea 
                     id="messageInput" 
-                    placeholder="Ask anything about your documents..." 
+                    placeholder="Ask a question or type a message..." 
                     rows="1"
                     onkeydown="handleKeyDown(event)"
                     oninput="autoResize(this)"
                 ></textarea>
                 
+                <button class="deep-research-btn" id="deepResearchBtn" onclick="deepResearch()" disabled title="Deep Research: Comprehensive analysis with web search">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+                
                 <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
                     </svg>
                 </button>
             </div>
@@ -594,6 +816,7 @@
         let isProcessing = false;
         let sessionId = null;
         let projectId = null;
+        let hasUploadedFiles = false; // Track if files have been uploaded
 
         // Generate or retrieve session ID and project ID
         function initSession() {
@@ -655,6 +878,130 @@
                 button.textContent = originalText;
                 button.style.color = '';
             }, 2000);
+        }
+
+        // Enhanced markdown parser
+        function parseMarkdown(text) {
+            let html = text;
+            
+            // Escape HTML but preserve newlines
+            html = html.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;');
+            
+            // Process line by line for better control
+            const lines = html.split('\n');
+            const processedLines = [];
+            let inList = false;
+            let listType = null;
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                
+                // Headers
+                if (line.match(/^######\s+(.+)$/)) {
+                    line = line.replace(/^######\s+(.+)$/, '<h6>$1</h6>');
+                } else if (line.match(/^#####\s+(.+)$/)) {
+                    line = line.replace(/^#####\s+(.+)$/, '<h5>$1</h5>');
+                } else if (line.match(/^####\s+(.+)$/)) {
+                    line = line.replace(/^####\s+(.+)$/, '<h4>$1</h4>');
+                } else if (line.match(/^###\s+(.+)$/)) {
+                    line = line.replace(/^###\s+(.+)$/, '<h3>$1</h3>');
+                } else if (line.match(/^##\s+(.+)$/)) {
+                    line = line.replace(/^##\s+(.+)$/, '<h2>$1</h2>');
+                } else if (line.match(/^#\s+(.+)$/)) {
+                    line = line.replace(/^#\s+(.+)$/, '<h1>$1</h1>');
+                }
+                // Unordered lists
+                else if (line.match(/^[\*\-]\s+(.+)$/)) {
+                    if (!inList || listType !== 'ul') {
+                        if (inList && listType === 'ol') {
+                            processedLines.push('</ol>');
+                        }
+                        processedLines.push('<ul>');
+                        inList = true;
+                        listType = 'ul';
+                    }
+                    line = line.replace(/^[\*\-]\s+(.+)$/, '<li>$1</li>');
+                }
+                // Ordered lists
+                else if (line.match(/^\d+\.\s+(.+)$/)) {
+                    if (!inList || listType !== 'ol') {
+                        if (inList && listType === 'ul') {
+                            processedLines.push('</ul>');
+                        }
+                        processedLines.push('<ol>');
+                        inList = true;
+                        listType = 'ol';
+                    }
+                    line = line.replace(/^\d+\.\s+(.+)$/, '<li>$1</li>');
+                }
+                // Blockquotes
+                else if (line.match(/^&gt;\s+(.+)$/)) {
+                    line = line.replace(/^&gt;\s+(.+)$/, '<blockquote>$1</blockquote>');
+                }
+                // Horizontal rules
+                else if (line.match(/^(---|\*\*\*|___)\s*$/)) {
+                    line = '<hr>';
+                }
+                // End list if we hit a non-list line
+                else if (inList && line.trim() !== '') {
+                    if (listType === 'ul') {
+                        processedLines.push('</ul>');
+                    } else {
+                        processedLines.push('</ol>');
+                    }
+                    inList = false;
+                    listType = null;
+                }
+                
+                processedLines.push(line);
+            }
+            
+            // Close any open lists
+            if (inList) {
+                if (listType === 'ul') {
+                    processedLines.push('</ul>');
+                } else {
+                    processedLines.push('</ol>');
+                }
+            }
+            
+            html = processedLines.join('\n');
+            
+            // Inline formatting (bold, italic, code, links)
+            // Bold (must come before italic)
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+            
+            // Italic
+            html = html.replace(/\*([^\*]+?)\*/g, '<em>$1</em>');
+            html = html.replace(/_([^_]+?)_/g, '<em>$1</em>');
+            
+            // Inline code
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            
+            // Line breaks and paragraphs
+            html = html.replace(/\n\n+/g, '</p><p>');
+            html = html.replace(/\n/g, '<br>');
+            
+            // Wrap in paragraph if not already wrapped in block elements
+            if (!html.match(/^<(h[1-6]|ul|ol|blockquote|hr)/)) {
+                html = '<p>' + html + '</p>';
+            }
+            
+            // Clean up
+            html = html.replace(/<p><\/p>/g, '');
+            html = html.replace(/<p>\s*<\/p>/g, '');
+            html = html.replace(/<p>(<h[1-6]>)/g, '$1');
+            html = html.replace(/(<\/h[1-6]>)<\/p>/g, '$1');
+            html = html.replace(/<p>(<ul>|<ol>|<blockquote>|<hr>)/g, '$1');
+            html = html.replace(/(<\/ul>|<\/ol>|<\/blockquote>|<hr>)<\/p>/g, '$1');
+            
+            return html;
         }
 
         // Parse and render message content with code blocks
@@ -754,9 +1101,13 @@
             textarea.style.height = 'auto';
             textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
             
-            // Enable/disable send button
+            // Enable/disable send and deep research buttons
             const sendBtn = document.getElementById('sendBtn');
-            sendBtn.disabled = !textarea.value.trim() || isProcessing;
+            const deepResearchBtn = document.getElementById('deepResearchBtn');
+            const hasText = textarea.value.trim().length > 0;
+            
+            sendBtn.disabled = !hasText || isProcessing;
+            deepResearchBtn.disabled = !hasText || isProcessing;
         }
 
         // Handle Enter key
@@ -818,6 +1169,7 @@
                 
                 if (response.ok) {
                     uploadedFileId = result.file_id;
+                    hasUploadedFiles = true;
                     showMessage('system', `✅ File uploaded successfully! Processing...`);
                     
                     // Auto-process the file
@@ -933,7 +1285,12 @@
             isProcessing = true;
 
             try {
-                await askRAG(message);
+                // Use chat endpoint if no files uploaded, otherwise use RAG
+                if (hasUploadedFiles) {
+                    await askRAG(message);
+                } else {
+                    await askChat(message);
+                }
             } catch (error) {
                 showMessage('assistant', `Sorry, I encountered an error: ${error.message}`, true);
             } finally {
@@ -943,7 +1300,37 @@
             }
         }
 
-        // Ask RAG
+        // Deep Research function
+        async function deepResearch() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isProcessing) return;
+
+            // Show user message
+            showMessage('user', message + ' 🔬');
+            
+            // Clear input
+            input.value = '';
+            autoResize(input);
+            
+            // Show deep research loading indicator
+            showDeepResearchLoading(true);
+            isProcessing = true;
+
+            try {
+                await performDeepResearch(message);
+            } catch (error) {
+                showMessage('assistant', `Sorry, I encountered an error during deep research: ${error.message}`, true);
+            } finally {
+                showDeepResearchLoading(false);
+                isProcessing = false;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('deepResearchBtn').disabled = false;
+            }
+        }
+
+        // Ask RAG (for uploaded documents)
         async function askRAG(question) {
             const projectId = getProjectId();
             
@@ -975,6 +1362,99 @@
                 showMessage('assistant', result.answer);
             } else {
                 throw new Error(result.detail || result.message || 'Failed to get answer');
+            }
+        }
+
+        // Ask Chat (for general conversation without documents)
+        async function askChat(question) {
+            const projectId = getProjectId();
+            
+            const response = await fetch(`${API_BASE}/nlp/index/chat/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: question
+                })
+            });
+
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            let result;
+            
+            if (contentType && contentType.includes('application/json')) {
+                result = await response.json();
+            } else {
+                const textResponse = await response.text();
+                console.error('Non-JSON response:', textResponse);
+                throw new Error(`Server returned non-JSON response: ${response.status} ${response.statusText}`);
+            }
+            
+            if (response.ok && result.answer) {
+                showMessage('assistant', result.answer);
+            } else {
+                throw new Error(result.detail || result.message || 'Failed to get answer');
+            }
+        }
+
+        // Perform Deep Research
+        async function performDeepResearch(question) {
+            const projectId = getProjectId();
+            
+            // Create an AbortController for timeout handling (5 minutes)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 minutes
+            
+            try {
+                const response = await fetch(`${API_BASE}/nlp/index/deep-research/${projectId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: question
+                    }),
+                    signal: controller.signal,
+                    // Disable browser timeout for long requests
+                    keepalive: false
+                });
+
+                clearTimeout(timeoutId);
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                let result;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    const textResponse = await response.text();
+                    console.error('Non-JSON response:', textResponse);
+                    throw new Error(`Server returned non-JSON response: ${response.status} ${response.statusText}`);
+                }
+                
+                if (response.ok && result.result) {
+                    // Extract final report from result
+                    const finalReport = result.result.final_report || result.result;
+                    showMessage('assistant', finalReport);
+                } else {
+                    throw new Error(result.detail || result.message || 'Failed to complete deep research');
+                }
+            } catch (error) {
+                clearTimeout(timeoutId);
+                
+                // Handle timeout specifically
+                if (error.name === 'AbortError') {
+                    throw new Error('Deep research took too long (timeout after 5 minutes). Please try a more specific question.');
+                }
+                
+                // Handle network errors with more context
+                if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+                    throw new Error('Network connection issue. This could be due to:\n• Server took too long to respond\n• CORS configuration\n• Network connectivity\n\nPlease check the browser console for details and try again.');
+                }
+                
+                throw error;
             }
         }
 
@@ -1017,19 +1497,30 @@
                 // Parse content for code blocks
                 const parts = parseMessageContent(content);
                 
+                // Create markdown container
+                const markdownContainer = document.createElement('div');
+                markdownContainer.className = 'markdown-content';
+                
                 parts.forEach(part => {
                     if (part.type === 'text') {
                         if (part.content.trim()) {
-                            const textNode = document.createElement('span');
-                            textNode.style.whiteSpace = 'pre-wrap';
-                            textNode.textContent = part.content;
-                            messageContent.appendChild(textNode);
+                            // Parse markdown and insert as HTML
+                            const markdownHtml = parseMarkdown(part.content);
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = markdownHtml;
+                            
+                            // Append all children
+                            while (tempDiv.firstChild) {
+                                markdownContainer.appendChild(tempDiv.firstChild);
+                            }
                         }
                     } else if (part.type === 'code') {
                         const codeBlock = createCodeBlock(part.language, part.content);
-                        messageContent.appendChild(codeBlock);
+                        markdownContainer.appendChild(codeBlock);
                     }
                 });
+                
+                messageContent.appendChild(markdownContainer);
                 
                 if (isError) {
                     messageContent.style.background = 'var(--error-bg)';
@@ -1060,6 +1551,66 @@
                 const chatMessages = document.getElementById('chatMessages');
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
+        }
+
+        // Show/hide deep research loading indicator
+        function showDeepResearchLoading(show) {
+            let loadingDiv = document.getElementById('deepResearchLoading');
+            
+            if (show) {
+                if (!loadingDiv) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    loadingDiv = document.createElement('div');
+                    loadingDiv.id = 'deepResearchLoading';
+                    loadingDiv.className = 'deep-research-loading';
+                    loadingDiv.innerHTML = `
+                        <div class="message-avatar" style="background: var(--assistant-bg);">🔬</div>
+                        <div class="research-status">
+                            <div class="research-title">🧠 Deep Research in Progress...</div>
+                            <div class="research-steps">
+                                <div class="research-step active">📋 Planning research tasks</div>
+                                <div class="research-step">🔍 Conducting web research</div>
+                                <div class="research-step">📊 Analyzing findings</div>
+                                <div class="research-step">📝 Generating comprehensive report</div>
+                            </div>
+                            <div class="research-progress">
+                                <div class="progress-bar"></div>
+                            </div>
+                        </div>
+                    `;
+                    chatMessages.appendChild(loadingDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+                
+                // Animate progress steps
+                animateResearchSteps();
+            } else {
+                if (loadingDiv) {
+                    loadingDiv.remove();
+                }
+            }
+        }
+
+        // Animate research steps
+        function animateResearchSteps() {
+            const steps = document.querySelectorAll('.research-step');
+            let currentStep = 0;
+            
+            const interval = setInterval(() => {
+                if (currentStep < steps.length) {
+                    steps[currentStep].classList.add('active');
+                    currentStep++;
+                } else {
+                    // Loop back to beginning
+                    steps.forEach(step => step.classList.remove('active'));
+                    currentStep = 0;
+                }
+                
+                // Check if loading indicator still exists
+                if (!document.getElementById('deepResearchLoading')) {
+                    clearInterval(interval);
+                }
+            }, 3000);
         }
 
         // Initialize

@@ -6,6 +6,7 @@ from models.db_schemas import DataChunk, Project
 from stores.llm.LLMEnums import DocumentTypeEnum
 
 from .BaseController import BaseController
+from agents.deep_researcher import DeepResearch
 
 
 class NLPController(BaseController):
@@ -18,6 +19,7 @@ class NLPController(BaseController):
         self.generation_client = generation_client
         self.embedding_client = embedding_client
         self.template_parser = template_parser
+        self.deep_researcher = DeepResearch(generation_client)
         self.logger = logging.getLogger("uvicorn")
 
     def create_collection_name(self, project_id: str):
@@ -283,3 +285,7 @@ class NLPController(BaseController):
             },
         )
         return answer, history
+    
+    async def deep_research(self, project: Project, query: str):
+        result = await self.deep_researcher.conduct_research(query, project_id=str(project.project_id))
+        return result

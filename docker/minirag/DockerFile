@@ -19,6 +19,9 @@ COPY src/requirments.txt .
 
 RUN uv pip install -r requirments.txt --system
 
+# Install Playwright browsers with dependencies
+RUN playwright install --with-deps chromium
+
 COPY src/ .
 
 # Create directory structure for Alembic

@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     VECTOR_DB_DISTANCE_METHOD_LITERAL: List[str] = None
     VECTOR_DB_PGVEC_INDEX_THRESHOLD: int = 100  # Threshold to create index on pgvector vector column
 
-
+    TAVILY_API_KEY: str = None
     DEFAULT_LANG: str = "en"  # Default language for document processing
     PRIMARY_LANG: str = "en"  # Primary language for template parsing
     class Config:

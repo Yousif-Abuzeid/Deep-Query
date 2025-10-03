@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -10,14 +11,23 @@ from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.llm.templates import TemplateParser
 from stores.vectordb import VectorDBProviderFactory
 from utils.metrics import setup_metrics
+
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify exact origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 setup_metrics(app)
-
 
 
 # Main page route
@@ -36,7 +46,9 @@ async def startup_span():
     )
     print("Connected to the PostgreSQL database!")
     llm_provider_factory = LLMProviderFactory(config=settings)
-    vector_db_provider_factory = VectorDBProviderFactory(config=settings, db_client=app.db_client)
+    vector_db_provider_factory = VectorDBProviderFactory(
+        config=settings, db_client=app.db_client
+    )
 
     # Clients
     app.generation_client = llm_provider_factory.create(settings.GENERATION_BACKEND)

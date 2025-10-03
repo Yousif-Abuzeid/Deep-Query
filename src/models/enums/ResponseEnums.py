@@ -22,3 +22,5 @@ class ResponseSignal(Enum):
     RAG_ANSWER_SUCCESS = "rag_answer_success"
     CHAT_ANSWER_ERROR = "chat_answer_error"
     CHAT_ANSWER_SUCCESS = "chat_answer_success"
+    DEEP_RESEARCH_ERROR = "deep_research_error"
+    DEEP_RESEARCH_SUCCESS = "deep_research_success"
