@@ -33,18 +33,30 @@ logger = logging.getLogger("uvicorn")
 class DeepResearch:
     """Deep Research Agent using LangGraph with React agents for tool-calling."""
 
-    def __init__(self, generation_client, max_concurrent_research_units: int = None, max_researcher_iterations: int = None):
+    def __init__(
+        self,
+        generation_client,
+        max_concurrent_research_units: int = None,
+        max_researcher_iterations: int = None,
+    ):
         from helpers.config import get_settings
+
         settings = get_settings()
-        
+
         self.generation_client = generation_client
         self.llm = self.generation_client.get_langchain_chat_model()
-        
+
         # Use provided values or fall back to config
-        self.max_concurrent_research_units = max_concurrent_research_units or settings.MAX_CONCURRENT_RESEARCH_UNITS
-        self.max_researcher_iterations = max_researcher_iterations or settings.MAX_RESEARCHER_ITERATIONS
-        
-        logger.info(f"DeepResearch initialized with max_concurrent_research_units={self.max_concurrent_research_units}, max_researcher_iterations={self.max_researcher_iterations}")
+        self.max_concurrent_research_units = (
+            max_concurrent_research_units or settings.MAX_CONCURRENT_RESEARCH_UNITS
+        )
+        self.max_researcher_iterations = (
+            max_researcher_iterations or settings.MAX_RESEARCHER_ITERATIONS
+        )
+
+        logger.info(
+            f"DeepResearch initialized with max_concurrent_research_units={self.max_concurrent_research_units}, max_researcher_iterations={self.max_researcher_iterations}"
+        )
 
         # Initialize browser tools as None - will be created on first use
         self._browser_tools = None

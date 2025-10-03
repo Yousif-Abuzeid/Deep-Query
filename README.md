@@ -127,6 +127,8 @@ EMBEDDING_MODEL_ID="models/text-embedding-004"
 
 # Deep Research
 TAVILY_API_KEY="tvly-your-tavily-api-key"
+MAX_CONCURRENT_RESEARCH_UNITS=3  # Number of parallel research tasks per iteration
+MAX_RESEARCHER_ITERATIONS=3      # Maximum number of research cycles
 
 # Database
 POSTGRES_USERNAME="minirag"
@@ -222,11 +224,28 @@ GENERATION_MODEL_ID="gemini-1.5-pro"
 
 ### Deep Research Parameters
 
-Edit `src/agents/deep_researcher/deep_researcher.py`:
+Configure research behavior via environment variables in `.env.app`:
+
+```bash
+# Deep Research Configuration
+MAX_CONCURRENT_RESEARCH_UNITS=3  # Number of parallel research tasks per iteration
+MAX_RESEARCHER_ITERATIONS=3      # Maximum number of research cycles
+```
+
+**Parameters**:
+- `MAX_CONCURRENT_RESEARCH_UNITS`: Controls how many research agents work in parallel (default: 3)
+- `MAX_RESEARCHER_ITERATIONS`: Maximum number of research-refinement cycles (default: 3)
+
+These can also be overridden programmatically when initializing the DeepResearch class:
 
 ```python
-self.max_concurrent_research_units = 3  # Parallel research tasks
-self.max_researcher_iterations = 3      # Maximum research cycles
+from agents.deep_researcher import DeepResearch
+
+researcher = DeepResearch(
+    generation_client=client,
+    max_concurrent_research_units=5,  # Override config
+    max_researcher_iterations=4       # Override config
+)
 ```
 
 ## 📊 API Endpoints
