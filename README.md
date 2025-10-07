@@ -1,4 +1,4 @@
-# RAG-APP 🚀
+# Deep Query 
 
 A powerful **Retrieval-Augmented Generation (RAG)** application with an advanced **Deep Research Agentic System** for comprehensive web research, document Q&A, and intelligent chat capabilities.
 
