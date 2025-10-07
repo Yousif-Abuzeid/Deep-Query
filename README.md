@@ -56,7 +56,6 @@ User Query → Supervisor Agent → Research Tasks
 - **Backend**: FastAPI, Python 3.10+
 - **Frontend**: Vanilla JavaScript with modern CSS
 - **Database**: PostgreSQL with pgvector extension
-- **Vector DB**: Qdrant
 - **LLM Framework**: LangChain 0.3.27, LangGraph 0.6.7
 - **Web Research**: Tavily API, Playwright
 - **Monitoring**: Prometheus + Grafana
